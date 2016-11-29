@@ -1,0 +1,8 @@
+---
+- name: update package sources
+  apt: update_cache=yes cache_valid_time=3600
+- name: install dev tools packages
+  apt: name={{ item }} state=present
+  with_items:
+    - imagemagick
+    - graphicsmagick

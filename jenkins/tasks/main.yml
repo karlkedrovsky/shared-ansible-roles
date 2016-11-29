@@ -1,0 +1,20 @@
+---
+- name: add jenkins repo key
+  apt_key: url=https://jenkins-ci.org/debian/jenkins-ci.org.key
+- name: add jenkins package repo
+  apt_repository: repo='deb http://pkg.jenkins-ci.org/debian binary/'
+- name: install jenkins
+  apt: name=jenkins state=present force=yes
+- name: install nginx
+  apt: name=nginx state=present force=yes
+- name: configure nginx to proxy to jenkins
+  template: src=proxy.nginx.j2 dest=/etc/nginx/sites-available/default force=yes
+# TOFIX: the template task above doesn't fire a handler so restart nginx here
+- name: restart nginx
+  service: name=nginx state=restarted
+- name: check for jenkins cli jar
+  stat: path=/usr/local/share/jenkins-cli.jar
+  register: jenkins_cli_jar
+- name: cp jenkins cli jar
+  command: cp /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar /usr/local/share/jenkins-cli.jar
+  when: jenkins_cli_jar.stat.exists == False

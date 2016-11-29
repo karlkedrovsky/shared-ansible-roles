@@ -1,0 +1,21 @@
+---
+- name: update package sources
+  apt: update_cache=yes cache_valid_time=3600
+- name: install wordpress related packages
+  apt: name={{ item }} state=present
+  with_items:
+    - mysql-client
+
+- name: install wp cli
+  get_url: url=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar dest=/usr/local/bin/wp
+- name: insure wp is executable  
+  file: path=/usr/local/bin/wp mode=0755
+
+- name: configure wordpress sites 
+  template: src=wordpress.nginx.j2 dest=/etc/nginx/sites-available/{{ item.key }}
+  with_dict: "{{ wordpress_sites }}"
+- name: enable wordpress sites
+  file: src=/etc/nginx/sites-available/{{ item.key }} dest=/etc/nginx/sites-enabled/{{ item.key }} state=link
+  with_dict: "{{ wordpress_sites }}"
+  notify:
+    - restart nginx

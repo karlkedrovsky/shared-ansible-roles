@@ -1,0 +1,5 @@
+---
+- name: install sculpin
+  get_url: url=https://download.sculpin.io/sculpin.phar dest=/usr/local/bin/sculpin
+- name: insure sculpin is executable  
+  file: path=/usr/local/bin/sculpin mode=0755

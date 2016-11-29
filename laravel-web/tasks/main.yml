@@ -1,0 +1,16 @@
+---
+- name: update package sources
+  apt: update_cache=yes cache_valid_time=3600
+- name: install laravel related packages
+  apt: name={{ item }} state=present
+  with_items:
+    - mysql-client
+
+- name: configure laravel sites 
+  template: src=laravel.nginx.j2 dest=/etc/nginx/sites-available/{{ item.key }}
+  with_dict: "{{ laravel_sites }}"
+- name: enable laravel sites
+  file: src=/etc/nginx/sites-available/{{ item.key }} dest=/etc/nginx/sites-enabled/{{ item.key }} state=link
+  with_dict: "{{ laravel_sites }}"
+  notify:
+    - restart nginx

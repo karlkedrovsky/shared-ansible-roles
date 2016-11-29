@@ -1,0 +1,29 @@
+---
+- name: add docker repo key
+  apt_key: keyserver='hkp://ha.pool.sks-keyservers.net:80' id='58118E89F3A912897C070ADBF76221572C52609D'
+- name: add docker package repo
+  apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+- name: set uname_r
+  shell: 'uname -r'
+  register: uname_r
+- name: set uname_s
+  shell: 'uname -s'
+  register: uname_s
+- name: set uname_m
+  shell: 'uname -m'
+  register: uname_m
+- name: install extra kernel packages
+  apt: name={{ item }} state=present
+  with_items:
+    - linux-image-extra-{{ uname_r.stdout }}
+    - linux-image-extra-virtual
+- name: install docker
+  apt: name=docker-engine state=present
+- name: install docker-compose
+  get_url: url=https://github.com/docker/compose/releases/download/1.9.0/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }} dest=/usr/local/bin/docker-compose mode=0755
+- name: set user_name
+  shell: 'whoami'
+  become: no
+  register: user_name
+- name: add user_name to docker group
+  user: name={{ user_name.stdout }} groups=docker append=yes

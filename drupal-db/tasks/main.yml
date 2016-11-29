@@ -1,0 +1,7 @@
+---
+- name: create drupal databases
+  mysql_db: name={{ item.key }}
+  with_dict: "{{ drupal_sites }}"
+- name: create drupal database users
+  mysql_user: name={{ item.key }} password={{ item.key }} host=% priv={{ item.key }}.*:ALL
+  with_dict: "{{ drupal_sites }}"

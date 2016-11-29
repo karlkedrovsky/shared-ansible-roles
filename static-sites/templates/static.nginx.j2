@@ -1,0 +1,29 @@
+server {
+    listen 80;
+    listen 443 ssl;
+
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+    server_name {{ item.key }};
+    root {{ item.value.docroot }};
+
+    access_log /var/log/nginx/{{ item.key }}-access.log;
+    error_log /var/log/nginx/{{ item.key }}-error.log;
+
+    client_max_body_size 0;
+
+    disable_symlinks off;
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+}

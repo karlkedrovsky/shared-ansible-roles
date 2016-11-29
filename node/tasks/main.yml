@@ -1,0 +1,7 @@
+---
+- name: add node.js repo key
+  apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+- name: add node.js package repo
+  apt_repository: repo='deb https://deb.nodesource.com/node_6.x xenial main'
+- name: install node.js
+  apt: name=nodejs state=present force=yes

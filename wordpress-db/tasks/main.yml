@@ -1,0 +1,7 @@
+---
+- name: create wordpress databases
+  mysql_db: name={{ item.key }}
+  with_dict: "{{ wordpress_sites }}"
+- name: create wordpress database users
+  mysql_user: name={{ item.key }} password={{ item.key }} host=% priv={{ item.key }}.*:ALL
+  with_dict: "{{ wordpress_sites }}"

@@ -1,0 +1,75 @@
+---
+- name: update cache and upgrade existing packages
+  apt: upgrade=dist update_cache=yes cache_valid_time=3600 force=yes autoremove=yes
+- name: install common packages
+  apt: name={{ item }} state=present
+  with_items:
+    - git
+    - mg
+    - keychain
+    - zsh
+    - curl
+    - zip
+    - unzip
+    - tree
+    - htop
+
+- name: update hostname
+  hostname: name={{ hostname }}
+- name: update locale
+  locale_gen: name={{ locale }} state=present
+# - name: update timezone
+#   timezone: name=America/Chicago
+- name: register swap var
+  stat: path=/var/swapfile
+  register: swapfile
+- name: create the file to be used for swap
+  command: fallocate -l 1024M /var/swapfile
+  when: swapfile.stat.exists == False
+- name: format the file for swap
+  command: mkswap /var/swapfile
+  when: swapfile.stat.exists == False
+- name: change swap file permissions
+  file: path=/var/swapfile owner=root group=root mode=0600
+  when: swapfile.stat.exists == False
+- name: add the file to the system as a swap file
+  command: swapon /var/swapfile
+  when: swapfile.stat.exists == False
+- name: add swap to fstab
+  lineinfile: dest=/etc/fstab regexp="^/var/swapfile" line="/var/swapfile none swap sw 0 0"
+
+- name: set git username
+  git_config: name=user.name scope=global value={{ user_full_name }}
+  become: yes
+  become_user: vagrant
+- name: set git email
+  git_config: name=user.email scope=global value={{ user_email }}
+  become: yes
+  become_user: vagrant
+
+- name: checkout oh-my-zsh
+  git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/vagrant/oh-my-zsh
+  become: yes
+  become_user: vagrant
+- name: create custome zsh theme directory
+  file: path=/home/vagrant/oh-my-zsh/custom/themes state=directory owner=vagrant mode=0755
+- name: copy custom zsh theme
+  copy: src=files/karl.zsh-theme dest=/home/vagrant/oh-my-zsh/custom/themes/karl.zsh-theme owner=vagrant mode=0644
+- name: checkout config
+  git: repo=https://github.com/karlkedrovsky/config dest=/home/vagrant/config
+  become: yes
+  become_user: vagrant
+- name: link .zshrc
+  file: src=/home/vagrant/config/zshrc dest=/home/vagrant/.zshrc state=link
+  become: yes
+  become_user: vagrant
+- name: link .aliases
+  file: src=/home/vagrant/config/aliases dest=/home/vagrant/.aliases state=link
+  become: yes
+  become_user: vagrant
+- name: link .drush
+  file: src=/home/vagrant/config/drush dest=/home/vagrant/.drush state=link
+  become: yes
+  become_user: vagrant
+- name: set user shell to zsh
+  user: name=vagrant shell=/usr/bin/zsh

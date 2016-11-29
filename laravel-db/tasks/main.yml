@@ -1,0 +1,7 @@
+---
+- name: create laravel databases
+  mysql_db: name={{ item.key }}
+  with_dict: "{{ laravel_sites }}"
+- name: create laravel database users
+  mysql_user: name={{ item.key }} password={{ item.key }} host=% priv={{ item.key }}.*:ALL
+  with_dict: "{{ laravel_sites }}"
