@@ -5,3 +5,7 @@
   apt_repository: repo='deb https://deb.nodesource.com/node_6.x xenial main'
 - name: install node.js
   apt: name=nodejs state=present force=yes
+- name: add yarn package repo
+  apt_repository: repo='deb https://dl.yarnpkg.com/debian/ stable main'
+- name: install yarn
+  apt: name=yarn state=present force=yes

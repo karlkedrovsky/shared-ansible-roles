@@ -48,3 +48,7 @@
   shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   args:
     creates: /usr/local/bin/composer
+- name: install phpunit
+  get_url: url=https://phar.phpunit.de/phpunit.phar dest=/usr/local/bin/phpunit
+- name: insure phpunit is executable
+  file: path=/usr/local/bin/phpunit mode=0755
