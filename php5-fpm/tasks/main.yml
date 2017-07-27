@@ -1,0 +1,57 @@
+---
+- name: add php5 ppa
+  apt_repository: repo='ppa:ondrej/php'
+- name: update package sources
+  apt: update_cache=yes cache_valid_time=3600
+- name: install php packages
+  apt: name={{ item }} state=present
+  with_items:
+    - php5.6-fpm
+    - php5.6-sqlite3
+    - php5.6-mysql
+    - php5.6-gd
+    - php5.6-curl
+    - php5.6-mcrypt
+    - php5.6-mbstring
+    - php5.6-zip
+    - php5.6-cli
+    - php5.6-memcached
+    - php5.6-xml
+    - php-pear
+    - python-mysqldb
+- name: increase php memory limit
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^memory_limit =" line="memory_limit = 256M"
+  notify:
+    - restart php5
+- name: increase php max post size
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^post_max_size =" line="post_max_size = 1024M"
+  notify:
+    - restart php5
+- name: increase php max upload size
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^upload_max_filesize =" line="upload_max_filesize = 1024M"
+  notify:
+    - restart php5
+- name: set php fpm timezone
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^date.timezone =" line="date.timezone = America/Chicago"
+  notify:
+    - restart php5
+- name: set php display_errors on
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^display_errors =" line="display_errors = On"
+  notify:
+    - restart php5
+- name: set php display_startup_errors on
+  lineinfile: dest=/etc/php/5.6/fpm/php.ini regexp="^display_startup_errors =" line="display_startup_errors = On"
+  notify:
+    - restart php5
+- name: set php cli timezone
+  lineinfile: dest=/etc/php/5.6/cli/php.ini regexp="^date.timezone =" line="date.timezone = America/Chicago"
+  notify:
+    - restart php5
+- name: install composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  args:
+    creates: /usr/local/bin/composer
+- name: install phpunit
+  get_url: url=https://phar.phpunit.de/phpunit.phar dest=/usr/local/bin/phpunit
+- name: insure phpunit is executable
+  file: path=/usr/local/bin/phpunit mode=0755

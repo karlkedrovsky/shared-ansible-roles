@@ -15,26 +15,6 @@
 - name: insure drush is executable  
   file: path=/usr/local/bin/drupal mode=0755
 
-- name: check for acquia files
-  become: false
-  local_action: stat path=.acquia
-  register: acquia_files
-  ignore_errors: True
-- name: copy acquia files
-  copy: src=.acquia dest=/home/vagrant owner=vagrant
-  become: yes
-  become_user: vagrant
-  when: acquia_files.stat.exists
-- name: check for drush files
-  become: false
-  local_action: stat path=.drush
-  register: drush_files
-  ignore_errors: True
-- name: copy drush files
-  copy: src=.drush/ dest=/home/vagrant/.drush owner=vagrant
-  become: yes
-  become_user: vagrant
-  when: drush_files.stat.exists
 - name: create drush dump dir
   file: path=/home/vagrant/drush-dump-dir state=directory
   become: yes
