@@ -1,47 +1,49 @@
 ---
+- name: add php5 ppa
+  apt_repository: repo='ppa:ondrej/php'
 - name: update package sources
   apt: update_cache=yes cache_valid_time=3600
 - name: install php packages
   apt: name={{ item }} state=present
   with_items:
-    - php-fpm
-    - php-sqlite3
-    - php-mysql
-    - php-gd
-    - php-curl
-    - php-mcrypt
-    - php-mbstring
-    - php-zip
-    - php-cli
-    - php-memcached
-    - php-pear
-    - python-mysqldb
+    - "php{{ php_version }}-fpm"
+    - "php{{ php_version }}-sqlite3"
+    - "php{{ php_version }}-mysql"
+    - "php{{ php_version }}-gd"
+    - "php{{ php_version }}-curl"
+    - "php{{ php_version }}-mcrypt"
+    - "php{{ php_version }}-mbstring"
+    - "php{{ php_version }}-zip"
+    - "php{{ php_version }}-cli"
+    - "php{{ php_version }}-memcached"
+    - "php-pear"
+    - "python-mysqldb"
 - name: increase php memory limit
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^memory_limit =" line="memory_limit = 256M"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^memory_limit =" line="memory_limit = 256M"
   notify:
     - restart php
 - name: increase php max post size
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^post_max_size =" line="post_max_size = 1024M"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^post_max_size =" line="post_max_size = 1024M"
   notify:
     - restart php
 - name: increase php max upload size
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^upload_max_filesize =" line="upload_max_filesize = 1024M"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^upload_max_filesize =" line="upload_max_filesize = 1024M"
   notify:
     - restart php
 - name: set php fpm timezone
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^date.timezone =" line="date.timezone = America/Chicago"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^date.timezone =" line="date.timezone = America/Chicago"
   notify:
     - restart php
 - name: set php display_errors on
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^display_errors =" line="display_errors = On"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^display_errors =" line="display_errors = On"
   notify:
     - restart php
 - name: set php display_startup_errors on
-  lineinfile: dest=/etc/php/7.0/fpm/php.ini regexp="^display_startup_errors =" line="display_startup_errors = On"
+  lineinfile: dest="/etc/php/{{ php_version }}/fpm/php.ini" regexp="^display_startup_errors =" line="display_startup_errors = On"
   notify:
     - restart php
 - name: set php cli timezone
-  lineinfile: dest=/etc/php/7.0/cli/php.ini regexp="^date.timezone =" line="date.timezone = America/Chicago"
+  lineinfile: dest="/etc/php/{{ php_version }}/cli/php.ini" regexp="^date.timezone =" line="date.timezone = America/Chicago"
   notify:
     - restart php
 - name: install composer

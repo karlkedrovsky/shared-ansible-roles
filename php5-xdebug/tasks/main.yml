@@ -6,28 +6,28 @@
   with_items:
     - php-xdebug
 - name: add xdebug.remote_enable
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.remote_enable" line="xdebug.remote_enable = 1"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.remote_enable" line="xdebug.remote_enable = 1"
   notify:
-    - restart php5
+    - restart php
 - name: add xdebug.remote_handler
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.remote_handler" line="xdebug.remote_handler = dbgp"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.remote_handler" line="xdebug.remote_handler = dbgp"
   notify:
-    - restart php5
+    - restart php
 - name: add xdebug.remote_mote
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.remote_mode" line="xdebug.remote_mode = req"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.remote_mode" line="xdebug.remote_mode = req"
   notify:
-    - restart php5
+    - restart php
 - name: add xdebug.remote_host
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.remote_host" line="xdebug.remote_host = 10.1.0.1"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.remote_host" line="xdebug.remote_host = 10.1.0.1"
   notify:
-    - restart php5
+    - restart php
 - name: add xdebug.remote_port
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.remote_port" line="xdebug.remote_port = 9000"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.remote_port" line="xdebug.remote_port = 9000"
   notify:
-    - restart php5
+    - restart php
 - name: update xdebug nesting level
-  lineinfile: dest=/etc/php/5.6/mods-available/xdebug.ini regexp="^xdebug.max_nesting_level" line="xdebug.max_nesting_level = 256"
+  lineinfile: dest=/etc/php/{{ php_version }}/mods-available/xdebug.ini regexp="^xdebug.max_nesting_level" line="xdebug.max_nesting_level = 256"
   notify:
-    - restart php5
+    - restart php
 - name: disable xdebug for cli
-  file: path=/etc/php/7.06/cli/conf.d/20-xdebug.ini state=absent
+  file: path=/etc/php/{{ php_version }}/cli/conf.d/20-xdebug.ini state=absent

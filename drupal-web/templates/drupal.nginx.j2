@@ -45,7 +45,7 @@ server {
         location ~ \.php(/|$) {
             fastcgi_split_path_info ^(.+?\.php)(/.+)$;
             fastcgi_param PATH_INFO $fastcgi_path_info;
-            fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
             fastcgi_index index.php;
             include fastcgi_params;
         }
@@ -69,7 +69,7 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param DRUPAL_CONFIG /var/www/nginx/drupal-config/;
         fastcgi_intercept_errors on;
-        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
     }
 
     # Fighting with ImageCache? This little gem is amazing.

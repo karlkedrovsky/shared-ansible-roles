@@ -55,10 +55,15 @@
   file: path=/home/vagrant/oh-my-zsh/custom/themes state=directory owner=vagrant mode=0755
 - name: copy custom zsh theme
   copy: src=files/karl.zsh-theme dest=/home/vagrant/oh-my-zsh/custom/themes/karl.zsh-theme owner=vagrant mode=0644
+- name: check for user config files
+  stat: path=config
+  register: user_config_files
+  ignore_errors: True
 - name: checkout config
   git: repo=https://github.com/karlkedrovsky/config dest=/home/vagrant/config
   become: yes
   become_user: vagrant
+  when: user_config_files.stat.exists == False
 - name: link .zshrc
   file: src=/home/vagrant/config/zshrc dest=/home/vagrant/.zshrc state=link
   become: yes
