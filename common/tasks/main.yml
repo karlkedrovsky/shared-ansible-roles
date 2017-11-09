@@ -13,6 +13,7 @@
     - unzip
     - tree
     - htop
+    - emacs-nox
 
 - name: update hostname
   hostname: name={{ hostname }}
@@ -48,22 +49,17 @@
   become_user: vagrant
 
 - name: checkout oh-my-zsh
-  git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/vagrant/oh-my-zsh
+  git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/vagrant/oh-my-zsh force=yes
   become: yes
   become_user: vagrant
-- name: create custome zsh theme directory
+- name: create custom zsh theme directory
   file: path=/home/vagrant/oh-my-zsh/custom/themes state=directory owner=vagrant mode=0755
 - name: copy custom zsh theme
   copy: src=files/karl.zsh-theme dest=/home/vagrant/oh-my-zsh/custom/themes/karl.zsh-theme owner=vagrant mode=0644
-- name: check for user config files
-  stat: path=config
-  register: user_config_files
-  ignore_errors: True
 - name: checkout config
-  git: repo=https://github.com/karlkedrovsky/config dest=/home/vagrant/config
+  git: repo=https://github.com/karlkedrovsky/config dest=/home/vagrant/config force=yes
   become: yes
   become_user: vagrant
-  when: user_config_files.stat.exists == False
 - name: link .zshrc
   file: src=/home/vagrant/config/zshrc dest=/home/vagrant/.zshrc state=link
   become: yes
